@@ -16,7 +16,9 @@ const Keyboard = (props: {
       style={{
         display: 'flex',
         flexWrap: 'wrap',
+        flexDirection: 'column',
         maxWidth: '300px',
+        margin: 'auto',
       }}
     >
       <div>

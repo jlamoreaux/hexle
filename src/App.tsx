@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Keyboard from './components/Keyboard';
-import LetterField from './components/LetterField';
+import LetterField, { LETTER_COLOR } from './components/LetterField';
 import data from './codes.json';
 
 export const HEX_CHARS = [
@@ -349,20 +349,34 @@ const App = () => {
     };
   }, [deleteCharacter, setValueOfCurrentField]);
   return (
-    <div>
+    <div style={{
+      textAlign: 'center',
+      color: LETTER_COLOR.DEFAULT,
+    }}>
       <h1>HEXLE</h1>
       {gameResult === GameResult.WIN && <div>You won!</div>}
       {gameResult === GameResult.LOSS && <div>You lost!</div>}
-      {attempts.map((attempt, i) => {
-        return <div key={i}>{code && <RowOfInputs rowInput={attempt} />}</div>;
-      })}
-      <Keyboard
-        setValueOfCurrentField={setValueOfCurrentField}
-        charStatus={characters}
-        deleteChar={deleteCharacter}
-        submit={handleSubmit}
-        submitIsDisabled={currentIndex.column < 6}
-      />
+      <div
+        style={{
+          margin: 'auto',
+          display: 'flex',
+          width: '100%',
+          justifyContent: 'center',
+        }}
+      >
+        <div>
+          {attempts.map((attempt, i) => {
+            return <div key={i}>{code && <RowOfInputs rowInput={attempt} />}</div>;
+          })}
+          <Keyboard
+            setValueOfCurrentField={setValueOfCurrentField}
+            charStatus={characters}
+            deleteChar={deleteCharacter}
+            submit={handleSubmit}
+            submitIsDisabled={currentIndex.column < 6}
+          />
+        </div>
+      </div>
     </div>
   );
 };

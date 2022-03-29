@@ -1,6 +1,6 @@
 import React from 'react';
-import { buttonStyle } from './KeyboardButton';
-import { BACKGROUND_COLOR } from './LetterField';
+import { buttonStyle, DEFAULT_BACKGROUND_COLOR } from './KeyboardButton';
+import { LETTER_COLOR } from './LetterField';
 
 interface ActionButtonProps {
   disabled?: boolean;
@@ -12,7 +12,7 @@ const ActionButton = ({ disabled, label, action }: ActionButtonProps) => {
   return (
     <button
       onClick={action}
-      style={{ backgroundColor: BACKGROUND_COLOR.INITIAL, ...buttonStyle }}
+      style={{ backgroundColor: DEFAULT_BACKGROUND_COLOR, color: LETTER_COLOR.DEFAULT, ...buttonStyle }}
       disabled={disabled}
     >
       {label.toUpperCase()}
