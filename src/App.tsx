@@ -26,7 +26,7 @@ export const HEX_CHARS = [
 export enum GameResult {
   WIN = 'WIN',
   LOSS = 'LOSS',
-  IN_PROGRESS = 'IN_PROGRESS'
+  IN_PROGRESS = 'IN_PROGRESS',
 }
 
 export type AllowedChars = typeof HEX_CHARS[number];
@@ -139,7 +139,9 @@ const App = () => {
       { value: '', result: RESULT.UNKNOWN },
     ],
   ]);
-  const [gameResult, setGameResult] = useState<GameResult>(GameResult.IN_PROGRESS);
+  const [gameResult, setGameResult] = useState<GameResult>(
+    GameResult.IN_PROGRESS
+  );
 
   const getHexCode = (code: number): string => {
     return Math.floor(code).toString(16);
@@ -160,6 +162,7 @@ const App = () => {
 
   const guessCode = (attempt: CharacterInput[]) => {
     if (!code) {
+      console.log("What's the code???");
       return;
     }
     const currentAttemptValues = attempts[currentIndex.row].map((character) => {
@@ -228,14 +231,18 @@ const App = () => {
 
   const getDayNumber = () => {
     const today = new Date();
-    const startDate = new Date('03-26-2022');
-    return Math.floor((today.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
-  }
+    const startDate = new Date('2022-03-26');
+    return Math.floor(
+      (today.getTime() - startDate.getTime()) / (1000 * 3600 * 24)
+    );
+  };
 
   const handleSubmit = () => {
     if (isCompleted) return;
     guessCode(attempts[currentIndex.row]);
-    const isGameWon = attempts[currentIndex.row].every(char => char.result === RESULT.CORRECT);
+    const isGameWon = attempts[currentIndex.row].every(
+      (char) => char.result === RESULT.CORRECT
+    );
     if (isGameWon) {
       setGameResult(GameResult.WIN);
       setIsCompleted(true);
@@ -322,8 +329,6 @@ const App = () => {
 
   useEffect(() => {
     const getDailyCode = () => {
-
-
       const dayNumber = getDayNumber();
       return data.codes[dayNumber];
     };
@@ -354,12 +359,20 @@ const App = () => {
     };
   }, [deleteCharacter, setValueOfCurrentField]);
   return (
-    <div style={{
-      textAlign: 'center',
-      color: LETTER_COLOR.DEFAULT,
-    }}>
+    <div
+      style={{
+        textAlign: 'center',
+        color: LETTER_COLOR.DEFAULT,
+      }}
+    >
       <h1>HEXLE</h1>
-      {gameResult !== GameResult.IN_PROGRESS && <GameOver attempts={attempts.slice(0, currentIndex.row + 1)} gameResult={gameResult} gameNumber={getDayNumber()}></GameOver>}
+      {gameResult !== GameResult.IN_PROGRESS && (
+        <GameOver
+          attempts={attempts.slice(0, currentIndex.row + 1)}
+          gameResult={gameResult}
+          gameNumber={getDayNumber()}
+        ></GameOver>
+      )}
       <div
         style={{
           margin: 'auto',
@@ -370,7 +383,11 @@ const App = () => {
       >
         <div>
           {attempts.map((attempt, i) => {
-            return <div key={i}>{code && <RowOfInputs rowInput={attempt} />}</div>;
+            return (
+              <div key={i}>
+                <RowOfInputs rowInput={attempt} />
+              </div>
+            );
           })}
           <Keyboard
             setValueOfCurrentField={setValueOfCurrentField}
