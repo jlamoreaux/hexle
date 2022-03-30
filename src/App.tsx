@@ -366,7 +366,11 @@ const App = () => {
       >
         <div>
           {attempts.map((attempt, i) => {
-            return <div key={i}>{code && <RowOfInputs rowInput={attempt} />}</div>;
+            return (
+              <div key={i}>
+                <RowOfInputs rowInput={attempt} />
+              </div>;
+            )
           })}
           <Keyboard
             setValueOfCurrentField={setValueOfCurrentField}
