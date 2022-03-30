@@ -25,7 +25,7 @@ export const HEX_CHARS = [
 enum GameResult {
   WIN = 'WIN',
   LOSS = 'LOSS',
-  IN_PROGRESS = 'IN_PROGRESS'
+  IN_PROGRESS = 'IN_PROGRESS',
 }
 
 export type AllowedChars = typeof HEX_CHARS[number];
@@ -138,7 +138,9 @@ const App = () => {
       { value: '', result: RESULT.UNKNOWN },
     ],
   ]);
-  const [gameResult, setGameResult] = useState<GameResult>(GameResult.IN_PROGRESS);
+  const [gameResult, setGameResult] = useState<GameResult>(
+    GameResult.IN_PROGRESS
+  );
 
   const getHexCode = (code: number): string => {
     return Math.floor(code).toString(16);
@@ -159,6 +161,7 @@ const App = () => {
 
   const guessCode = (attempt: CharacterInput[]) => {
     if (!code) {
+      console.log("What's the code???");
       return;
     }
     const currentAttemptValues = attempts[currentIndex.row].map((character) => {
@@ -228,7 +231,9 @@ const App = () => {
   const handleSubmit = () => {
     if (isCompleted) return;
     guessCode(attempts[currentIndex.row]);
-    const isGameWon = attempts[currentIndex.row].every(char => char.result === RESULT.CORRECT);
+    const isGameWon = attempts[currentIndex.row].every(
+      (char) => char.result === RESULT.CORRECT
+    );
     if (isGameWon) {
       setGameResult(GameResult.WIN);
       setIsCompleted(true);
@@ -316,10 +321,11 @@ const App = () => {
   useEffect(() => {
     const getDailyCode = () => {
       const today = new Date();
-      const startDate = new Date('03-26-2022');
+      const startDate = new Date('2022-03-26');
 
-      const dayNumber =
-       Math.floor((today.getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+      const dayNumber = Math.floor(
+        (today.getTime() - startDate.getTime()) / (1000 * 3600 * 24)
+      );
       return data.codes[dayNumber];
     };
     if (!code) {
@@ -349,10 +355,12 @@ const App = () => {
     };
   }, [deleteCharacter, setValueOfCurrentField]);
   return (
-    <div style={{
-      textAlign: 'center',
-      color: LETTER_COLOR.DEFAULT,
-    }}>
+    <div
+      style={{
+        textAlign: 'center',
+        color: LETTER_COLOR.DEFAULT,
+      }}
+    >
       <h1>HEXLE</h1>
       {gameResult === GameResult.WIN && <div>You won!</div>}
       {gameResult === GameResult.LOSS && <div>You lost!</div>}
@@ -366,7 +374,11 @@ const App = () => {
       >
         <div>
           {attempts.map((attempt, i) => {
-            return <div key={i}><RowOfInputs rowInput={attempt} /></div>
+            return (
+              <div key={i}>
+                <RowOfInputs rowInput={attempt} />
+              </div>
+            );
           })}
           <Keyboard
             setValueOfCurrentField={setValueOfCurrentField}
