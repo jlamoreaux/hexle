@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Keyboard from './components/Keyboard';
 import LetterField, { LETTER_COLOR } from './components/LetterField';
 import data from './codes.json';
+import GameOver from './components/GameOver';
 
 export const HEX_CHARS = [
   'a',
@@ -22,7 +23,7 @@ export const HEX_CHARS = [
   '9',
 ] as const;
 
-enum GameResult {
+export enum GameResult {
   WIN = 'WIN',
   LOSS = 'LOSS',
   IN_PROGRESS = 'IN_PROGRESS',
@@ -228,6 +229,14 @@ const App = () => {
     setAttempts(currentAttempts);
   };
 
+  const getDayNumber = () => {
+    const today = new Date();
+    const startDate = new Date('2022-03-26');
+    return Math.floor(
+      (today.getTime() - startDate.getTime()) / (1000 * 3600 * 24)
+    );
+  };
+
   const handleSubmit = () => {
     if (isCompleted) return;
     guessCode(attempts[currentIndex.row]);
@@ -320,12 +329,7 @@ const App = () => {
 
   useEffect(() => {
     const getDailyCode = () => {
-      const today = new Date();
-      const startDate = new Date('2022-03-26');
-
-      const dayNumber = Math.floor(
-        (today.getTime() - startDate.getTime()) / (1000 * 3600 * 24)
-      );
+      const dayNumber = getDayNumber();
       return data.codes[dayNumber];
     };
     if (!code) {
@@ -362,8 +366,13 @@ const App = () => {
       }}
     >
       <h1>HEXLE</h1>
-      {gameResult === GameResult.WIN && <div>You won!</div>}
-      {gameResult === GameResult.LOSS && <div>You lost!</div>}
+      {gameResult !== GameResult.IN_PROGRESS && (
+        <GameOver
+          attempts={attempts.slice(0, currentIndex.row + 1)}
+          gameResult={gameResult}
+          gameNumber={getDayNumber()}
+        ></GameOver>
+      )}
       <div
         style={{
           margin: 'auto',
