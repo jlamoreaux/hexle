@@ -34,9 +34,10 @@ const ShareButton = ({ label, shareFunction }: ShareButtonProps) => {
         ...buttonStyle,
         border: 'none',
         backgroundColor: DEFAULT_BACKGROUND_COLOR,
-        fontWeight: '600',
         color: LETTER_COLOR.DEFAULT,
+        cursor: 'pointer',
         fontSize: '1em',
+        fontWeight: '600',
       }}
     >
       {label}
@@ -51,10 +52,11 @@ const CloseButton = ({ closeModal }: { closeModal: () => void }) => {
         border: 'none',
         background: 'none',
         color: LETTER_COLOR.DEFAULT,
-        right: 0,
+        cursor: 'pointer',
         left: 'auto',
         margin: 'auto',
         position: 'absolute',
+        right: 0,
       }}
       type="button"
       onClick={closeModal}

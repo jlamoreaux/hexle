@@ -466,10 +466,12 @@ const App = () => {
           onClick={() => showOrHideModal(true)}
           style={{
             ...buttonStyle,
+            cursor: 'pointer',
+            height: 'auto',
             minWidth: 'none',
+            padding: '8px',
             position: 'absolute',
             right: '24px',
-            height: '24px',
           }}
         >
           Share

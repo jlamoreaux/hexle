@@ -12,7 +12,11 @@ const ActionButton = ({ disabled, label, action }: ActionButtonProps) => {
   return (
     <button
       onClick={action}
-      style={{ backgroundColor: DEFAULT_BACKGROUND_COLOR, color: LETTER_COLOR.DEFAULT, ...buttonStyle }}
+      style={{
+        ...buttonStyle,
+        backgroundColor: DEFAULT_BACKGROUND_COLOR,
+        color: LETTER_COLOR.DEFAULT,
+      }}
       disabled={disabled}
     >
       {label.toUpperCase()}
