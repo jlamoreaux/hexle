@@ -54,6 +54,7 @@ const CloseButton = ({ closeModal }: { closeModal: () => void }) => {
         right: 0,
         left: 'auto',
         margin: 'auto',
+        position: 'absolute',
       }}
       type="button"
       onClick={closeModal}
