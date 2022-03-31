@@ -1,18 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { CharacterInput, GameResult, RESULT } from '../App';
 import { BACKGROUND_COLOR, LETTER_COLOR } from './LetterField';
 import { buttonStyle, DEFAULT_BACKGROUND_COLOR } from './KeyboardButton';
 
 type GameOverProps = {
-  gameResult: GameResult;
   attempts: CharacterInput[][];
   gameNumber: number;
-}
+  gameResult: GameResult;
+  isVisible: boolean;
+  setIsVisible: (shouldClose: boolean) => void;
+};
 
 type ShareButtonProps = {
   label: string;
   shareFunction: () => void;
-}
+};
+
+const shareToClipboard = (message: string) => {
+  navigator.clipboard.writeText(message);
+};
+
+const shareResult = (message: string) => {
+  if (navigator.share) {
+    navigator.share({ text: message });
+  }
+};
 
 const ShareButton = ({ label, shareFunction }: ShareButtonProps) => {
   return (
@@ -29,66 +41,103 @@ const ShareButton = ({ label, shareFunction }: ShareButtonProps) => {
     >
       {label}
     </button>
-  )
-}
+  );
+};
 
-const GameOver = ({ gameResult, attempts, gameNumber }: GameOverProps) => {
-  const [isClosed, setIsClosed] = useState(false);
-  const generateBlocks = (attempts: CharacterInput[][]): string => {
-    const emojiBlocks = attempts.map(row => {
-      return row.map(char => {
-        const result = char.result;
-        switch (result) {
-          case RESULT.CORRECT:
-            return String.fromCodePoint(0x1F7E9);
-          case RESULT.IN_WORD:
-            return String.fromCodePoint(0x1F7E8);
-          default:
-            return String.fromCodePoint(0x2B1B);
-        }
-      }).join('')
+const CloseButton = ({ closeModal }: { closeModal: () => void }) => {
+  return (
+    <button
+      style={{
+        border: 'none',
+        background: 'none',
+        color: LETTER_COLOR.DEFAULT,
+        right: 0,
+        left: 'auto',
+        margin: 'auto',
+      }}
+      type="button"
+      onClick={closeModal}
+    >
+      Close
+    </button>
+  );
+};
+
+const GameOver = ({
+  attempts,
+  gameNumber,
+  gameResult,
+  isVisible,
+  setIsVisible,
+}: GameOverProps): JSX.Element => {
+  const closeModal = () => {
+    setIsVisible(false);
+  };
+
+  const generateBlocks = (
+    attempts: CharacterInput[][],
+    gameResult: GameResult
+  ): string => {
+    const emojiBlocks = attempts.map((row) => {
+      return row
+        .map((char) => {
+          const result = char.result;
+          switch (result) {
+            case RESULT.CORRECT:
+              return String.fromCodePoint(0x1f7e9);
+            case RESULT.IN_WORD:
+              return String.fromCodePoint(0x1f7e8);
+            default:
+              return String.fromCodePoint(0x2b1b);
+          }
+        })
+        .join('');
     });
-    return `Hexle ${gameNumber} ${attempts.length}/6\n${emojiBlocks.join("\r\n")}`;
+    return `Hexle ${gameNumber} ${
+      gameResult === GameResult.LOSS ? 'X' : attempts.length
+    }/6\n${emojiBlocks.join('\r\n')}`;
+  };
+
+  const resultsToShare =
+    gameResult === GameResult.IN_PROGRESS
+      ? 'Think you can guess a hex code by looking at a color? Test your skill at https://hexle.codes'
+      : generateBlocks(attempts, gameResult);
+
+  let modalMessage: string =
+    'You could share the game now...\n\nOr finish the game first and share how you did!';
+  if (gameResult === GameResult.WIN) {
+    modalMessage = 'You Win!';
   }
-  
-  const shareToClipboard = (message: string) => {
-    navigator.clipboard.writeText(message)
+  if (gameResult === GameResult.LOSS) {
+    modalMessage = 'Game Over';
   }
 
-  const shareResult = (message: string) => {
-    if (navigator.share) {
-      navigator.share({text: message});
-    }
-  }
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        backgroundColor: BACKGROUND_COLOR.INCORRECT,
+        padding: '10px',
+        margin: 'auto',
+        left: '0',
+        right: '0',
+        top: '150px',
+        maxWidth: '300px',
+        display: isVisible ? 'block' : 'none',
+      }}
+    >
+      <CloseButton closeModal={closeModal} />
+      <h3>{modalMessage}</h3>
+      <ShareButton
+        label="Share"
+        shareFunction={() => shareResult(resultsToShare)}
+      />
+      <ShareButton
+        label="Copy to Clipboard"
+        shareFunction={() => shareToClipboard(resultsToShare)}
+      />
+    </div>
+  );
+};
 
-  const resultsToShare = generateBlocks(attempts);
-  
-
-  if (gameResult !== GameResult.IN_PROGRESS) {
-    return (
-      <div
-        style={{
-          position: 'absolute',
-          backgroundColor: BACKGROUND_COLOR.INCORRECT,
-          padding: '10px',
-          margin: 'auto',
-          left: '0',
-          right: '0',
-          top: '150px',
-          maxWidth: '300px'
-        }}
-      >
-        <button style={{border: 'none', background: 'none', color: LETTER_COLOR.DEFAULT, right: 0, left: 'auto', margin: 'auto'}}>Close</button>
-        <h3>{GameResult.WIN ? "You Win!" : "Game Over"}</h3>
-        <ShareButton label="Share" shareFunction={() => shareResult(resultsToShare)} />
-        <ShareButton label="Copy to Clipboard" shareFunction={() => shareToClipboard(resultsToShare)} />
-      </div>
-    )
-  } else {
-    return (
-      <div></div>
-    )
-  }
-}
-
-export default GameOver
+export default GameOver;

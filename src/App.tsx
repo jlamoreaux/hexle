@@ -3,6 +3,7 @@ import Keyboard from './components/Keyboard';
 import LetterField, { LETTER_COLOR } from './components/LetterField';
 import data from './codes.json';
 import GameOver from './components/GameOver';
+import { buttonStyle } from './components/KeyboardButton';
 
 export const HEX_CHARS = [
   'a',
@@ -79,90 +80,166 @@ const RowOfInputs = (props: { rowInput: Array<CharacterInput> }) => {
   );
 };
 
+/**
+ * Saves data to local storage
+ * @type The type of the value being saved
+ * @param defaultValue the initial value to be saved
+ * @param key the key of the value to be saved
+ * @returns the key value pair of the object in local storage
+ */
+function useStickyState<Type>(
+  defaultValue: Type,
+  key: string
+): [value: Type, setValue: any] {
+  const [value, setValue] = useState<Type>(() => {
+    const stickyValue = window.localStorage.getItem(key);
+    return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
+  });
+  useEffect(() => {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  }, [key, value]);
+  return [value, setValue];
+}
+
+/**
+ * Retrieves an object from local storage
+ * @param key the key of the value being retrieved from local storage
+ * @returns the key value pair of the object in local storage
+ */
+const getStickyValue = (key: string): string | null => {
+  return window.localStorage.getItem(key);
+};
+
+/**
+ * Saves an object in local storage
+ * @param key the key of the value being saved in local storage
+ * @param value the value to be saved
+ */
+const setStickyValue = (key: string, value: any) => {
+  window.localStorage.setItem(key, JSON.stringify(value));
+};
+
+/**
+ *
+ * @returns the number of days since the game launched
+ */
+const getDayNumber = (): number => {
+  const today = new Date();
+  const startDate = new Date('2022-03-26');
+  return Math.floor(
+    (today.getTime() - startDate.getTime()) / (1000 * 3600 * 24)
+  );
+};
+
+/**
+ * Converts a base ten number to hexidecimal
+ * @param code the number to be converted into hexidecimal
+ * @returns a hexidecimal value of the initial number
+ */
+const getHexCode = (code: number): string => {
+  return Math.floor(code).toString(16);
+};
+
+/**
+ * Counts the number of occurances of each character in the code
+ * @param hexCode the hexidecimal code to analyze
+ * @returns {CharCount} An object where the key is the character and the value is the number of occurrances
+ */
+const getCharCount = (hexCode: Array<AllowedChars | ''>): CharCount => {
+  let charCount: CharCount = {};
+  hexCode.forEach((character, index) => {
+    if (character !== '') {
+      const char = character as AllowedChars;
+      charCount[char]
+        ? charCount[char]?.push(index)
+        : (charCount[char] = [index]);
+    }
+  });
+  return charCount;
+};
+
 const App = () => {
   const [code, setCode] = useState<number>();
-  const [isCompleted, setIsCompleted] = useState<boolean>(false);
-  const [characters, setCharacters] = useState<CharacterStatus>(
-    {} as CharacterStatus
-  );
-  const [currentIndex, setCurrentIndex] = useState<InputIndex>({
-    row: 0,
-    column: 0,
+  const [attempts, setAttempts] = useState<CharacterInput[][]>(() => {
+    const defaultValue = [
+      [
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+      ],
+      [
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+      ],
+      [
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+      ],
+      [
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+      ],
+      [
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+      ],
+      [
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+        { value: '', result: RESULT.UNKNOWN },
+      ],
+    ];
+    const stickyValue = window.localStorage.getItem('attempts');
+    return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
   });
-  const [attempts, setAttempts] = useState<Array<Array<CharacterInput>>>([
-    [
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-    ],
-    [
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-    ],
-    [
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-    ],
-    [
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-    ],
-    [
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-    ],
-    [
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-      { value: '', result: RESULT.UNKNOWN },
-    ],
-  ]);
-  const [gameResult, setGameResult] = useState<GameResult>(
-    GameResult.IN_PROGRESS
+  const [isCompleted, setIsCompleted] = useStickyState<boolean>(
+    false,
+    'isCompleted'
   );
+  const [characters, setCharacters] = useState<CharacterStatus>(() => {
+    const defaultValue = {} as CharacterStatus;
+    const stickyValue = getStickyValue('characters');
+    return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
+  });
+  const [currentIndex, setCurrentIndex] = useStickyState<InputIndex>(
+    { row: 0, column: 0 },
+    'currentIndex'
+  );
+  const [gameResult, setGameResult] = useStickyState<GameResult>(
+    GameResult.IN_PROGRESS,
+    'gameResult'
+  );
+  const [isShareModalVisible, setIsShareModalVisible] =
+    useState<boolean>(false);
 
-  const getHexCode = (code: number): string => {
-    return Math.floor(code).toString(16);
-  };
-
-  const getCharCount = (hexCode: Array<AllowedChars | ''>): CharCount => {
-    let charCount: CharCount = {};
-    hexCode.forEach((character, index) => {
-      if (character !== '') {
-        const char = character as AllowedChars;
-        charCount[char]
-          ? charCount[char]?.push(index)
-          : (charCount[char] = [index]);
-      }
-    });
-    return charCount;
-  };
-
-  const guessCode = (attempt: CharacterInput[]) => {
+  /**
+   * Analyzes the correctness of the current guess
+   * @param attempt array containing all characters in the current guess
+   */
+  const guessCode = (attempt: CharacterInput[]): void => {
     if (!code) {
-      console.log("What's the code???");
       return;
     }
     const currentAttemptValues = attempts[currentIndex.row].map((character) => {
@@ -229,14 +306,6 @@ const App = () => {
     setAttempts(currentAttempts);
   };
 
-  const getDayNumber = () => {
-    const today = new Date();
-    const startDate = new Date('2022-03-26');
-    return Math.floor(
-      (today.getTime() - startDate.getTime()) / (1000 * 3600 * 24)
-    );
-  };
-
   const handleSubmit = () => {
     if (isCompleted) return;
     guessCode(attempts[currentIndex.row]);
@@ -246,11 +315,15 @@ const App = () => {
     if (isGameWon) {
       setGameResult(GameResult.WIN);
       setIsCompleted(true);
+      setIsShareModalVisible(true);
       return;
     }
     moveRows();
   };
 
+  /**
+   * Moves currentIndex which points to the square that is the current active input
+   */
   const moveCurrentIndex = () => {
     let { row, column } = currentIndex;
     column++;
@@ -262,6 +335,9 @@ const App = () => {
     }
   };
 
+  /**
+   * Moves the currentIndex to the next row if another guess is available
+   */
   const moveRows = () => {
     const [row, column] = [currentIndex.row + 1, 0];
     if (currentIndex.row < 5) {
@@ -269,6 +345,7 @@ const App = () => {
     }
     setIsCompleted(true);
     setGameResult(GameResult.LOSS);
+    setIsShareModalVisible(true);
   };
 
   const setValueOfCurrentField = (value: AllowedChars) => {
@@ -353,24 +430,59 @@ const App = () => {
       }
     };
 
+    setStickyValue('attempts', attempts);
+    setStickyValue('characters', characters);
+
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [deleteCharacter, setValueOfCurrentField]);
+  }, [deleteCharacter, setValueOfCurrentField, attempts, characters]);
+
+  const showOrHideModal = (isVisible: boolean) => {
+    console.log(`Should we show the modal? ${isShareModalVisible}`);
+    setIsShareModalVisible(isVisible);
+  };
+
   return (
     <div
       style={{
         textAlign: 'center',
         color: LETTER_COLOR.DEFAULT,
+        maxWidth: '350px',
+        margin: 'auto',
+        left: 0,
+        right: 0,
       }}
     >
-      <h1>HEXLE</h1>
-      {gameResult !== GameResult.IN_PROGRESS && (
+      <header
+        style={{
+          width: '100%',
+          position: 'relative',
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => showOrHideModal(true)}
+          style={{
+            ...buttonStyle,
+            minWidth: 'none',
+            position: 'absolute',
+            right: '24px',
+            height: '24px',
+          }}
+        >
+          Share
+        </button>
+        <h1>HEXLE</h1>
+      </header>
+      {isShareModalVisible === true && (
         <GameOver
           attempts={attempts.slice(0, currentIndex.row + 1)}
           gameResult={gameResult}
           gameNumber={getDayNumber()}
+          isVisible={isShareModalVisible}
+          setIsVisible={showOrHideModal}
         ></GameOver>
       )}
       <div
