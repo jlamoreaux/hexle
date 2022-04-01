@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Keyboard from './components/Keyboard';
-import LetterField, { LETTER_COLOR } from './components/LetterField';
+import LetterField, {
+  BACKGROUND_COLOR,
+  LETTER_COLOR,
+} from './components/LetterField';
 import data from './codes.json';
 import GameOver from './components/GameOver';
 import { buttonStyle } from './components/KeyboardButton';
@@ -466,6 +469,8 @@ const App = () => {
           onClick={() => showOrHideModal(true)}
           style={{
             ...buttonStyle,
+            backgroundColor: BACKGROUND_COLOR.INCORRECT,
+            color: LETTER_COLOR.DEFAULT,
             cursor: 'pointer',
             height: 'auto',
             minWidth: 'none',
