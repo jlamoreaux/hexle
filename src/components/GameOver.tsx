@@ -7,6 +7,7 @@ type GameOverProps = {
   attempts: CharacterInput[][];
   gameNumber: number;
   gameResult: GameResult;
+  hexCode: string;
   isVisible: boolean;
   setIsVisible: (shouldClose: boolean) => void;
 };
@@ -24,6 +25,27 @@ const shareResult = (message: string) => {
   if (navigator.share) {
     navigator.share({ text: message });
   }
+};
+
+export const ColorSquare = ({
+  hexCode,
+  size,
+}: {
+  hexCode: string;
+  size: number;
+}) => {
+  return (
+    <div
+      style={{
+        backgroundColor: `#${hexCode}`,
+        height: `${size}px`,
+        left: 0,
+        margin: 'auto',
+        right: 0,
+        width: `${size}px`,
+      }}
+    ></div>
+  );
 };
 
 const ShareButton = ({ label, shareFunction }: ShareButtonProps) => {
@@ -70,6 +92,7 @@ const GameOver = ({
   attempts,
   gameNumber,
   gameResult,
+  hexCode,
   isVisible,
   setIsVisible,
 }: GameOverProps): JSX.Element => {
@@ -98,7 +121,7 @@ const GameOver = ({
     });
     return `Hexle ${gameNumber} ${
       gameResult === GameResult.LOSS ? 'X' : attempts.length
-    }/6\n${emojiBlocks.join('\r\n')}`;
+    }/6\n${emojiBlocks.join('\r\n')}\nhttps://hexle.codes`;
   };
 
   const resultsToShare =
@@ -131,6 +154,9 @@ const GameOver = ({
     >
       <CloseButton closeModal={closeModal} />
       <h3>{modalMessage}</h3>
+      <div style={{ margin: '24px auto' }}>
+        <ColorSquare hexCode={hexCode} size={100} />
+      </div>
       <ShareButton
         label="Share"
         shareFunction={() => shareResult(resultsToShare)}

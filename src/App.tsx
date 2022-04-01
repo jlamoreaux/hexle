@@ -5,7 +5,7 @@ import LetterField, {
   LETTER_COLOR,
 } from './components/LetterField';
 import data from './codes.json';
-import GameOver from './components/GameOver';
+import GameOver, { ColorSquare } from './components/GameOver';
 import { buttonStyle } from './components/KeyboardButton';
 
 export const HEX_CHARS = [
@@ -122,6 +122,14 @@ const setStickyValue = (key: string, value: any) => {
   window.localStorage.setItem(key, JSON.stringify(value));
 };
 
+const clearStickyValues = () => {
+  window.localStorage.removeItem('attempts');
+  window.localStorage.removeItem('characters');
+  window.localStorage.removeItem('currentIndex');
+  window.localStorage.removeItem('gameResult');
+  window.localStorage.removeItem('isCompleted');
+};
+
 /**
  *
  * @returns the number of days since the game launched
@@ -161,70 +169,76 @@ const getCharCount = (hexCode: Array<AllowedChars | ''>): CharCount => {
   return charCount;
 };
 
+const defaultAttemptsValue = [
+  [
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+  ],
+  [
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+  ],
+  [
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+  ],
+  [
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+  ],
+  [
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+  ],
+  [
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+    { value: '', result: RESULT.UNKNOWN },
+  ],
+] as CharacterInput[][];
+
+const defaultCharactersValue = {} as CharacterStatus;
+
 const App = () => {
-  const [code, setCode] = useState<number>();
+  const [code, setCode] = useStickyState<number | null>(null, 'code');
   const [attempts, setAttempts] = useState<CharacterInput[][]>(() => {
-    const defaultValue = [
-      [
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-      ],
-      [
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-      ],
-      [
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-      ],
-      [
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-      ],
-      [
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-      ],
-      [
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-        { value: '', result: RESULT.UNKNOWN },
-      ],
-    ];
     const stickyValue = window.localStorage.getItem('attempts');
-    return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
+    return stickyValue !== null
+      ? JSON.parse(stickyValue)
+      : defaultAttemptsValue;
   });
   const [isCompleted, setIsCompleted] = useStickyState<boolean>(
     false,
     'isCompleted'
   );
   const [characters, setCharacters] = useState<CharacterStatus>(() => {
-    const defaultValue = {} as CharacterStatus;
     const stickyValue = getStickyValue('characters');
-    return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
+    return stickyValue !== null
+      ? JSON.parse(stickyValue)
+      : defaultCharactersValue;
   });
   const [currentIndex, setCurrentIndex] = useStickyState<InputIndex>(
     { row: 0, column: 0 },
@@ -412,8 +426,15 @@ const App = () => {
       const dayNumber = getDayNumber();
       return data.codes[dayNumber];
     };
-    if (!code) {
-      setCode(getDailyCode());
+    const currentCode = getDailyCode();
+
+    if (code !== currentCode) {
+      console.log(code);
+      console.log(currentCode);
+      clearStickyValues();
+      setAttempts(defaultAttemptsValue);
+      setCharacters(defaultCharactersValue);
+      setCode(currentCode);
     }
 
     const handleKeyDown = (keyDownEvent: KeyboardEvent) => {
@@ -464,6 +485,17 @@ const App = () => {
           position: 'relative',
         }}
       >
+        <div
+          style={{
+            position: 'absolute',
+            left: '48px',
+            top: '4px',
+            border: `2px solid ${LETTER_COLOR.DEFAULT}`,
+            borderRadius: '4px',
+          }}
+        >
+          {code && <ColorSquare hexCode={getHexCode(code)} size={40} />}
+        </div>
         <button
           type="button"
           onClick={() => showOrHideModal(true)}
@@ -483,11 +515,12 @@ const App = () => {
         </button>
         <h1>HEXLE</h1>
       </header>
-      {isShareModalVisible === true && (
+      {code && isShareModalVisible === true && (
         <GameOver
           attempts={attempts.slice(0, currentIndex.row + 1)}
           gameResult={gameResult}
           gameNumber={getDayNumber()}
+          hexCode={getHexCode(code)}
           isVisible={isShareModalVisible}
           setIsVisible={showOrHideModal}
         ></GameOver>
