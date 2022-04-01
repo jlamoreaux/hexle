@@ -429,8 +429,6 @@ const App = () => {
     const currentCode = getDailyCode();
 
     if (code !== currentCode) {
-      console.log(code);
-      console.log(currentCode);
       clearStickyValues();
       setAttempts(defaultAttemptsValue);
       setCharacters(defaultCharactersValue);
@@ -464,7 +462,6 @@ const App = () => {
   }, [deleteCharacter, setValueOfCurrentField, attempts, characters]);
 
   const showOrHideModal = (isVisible: boolean) => {
-    console.log(`Should we show the modal? ${isShareModalVisible}`);
     setIsShareModalVisible(isVisible);
   };
 

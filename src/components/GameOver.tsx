@@ -129,7 +129,7 @@ const GameOver = ({
       ? 'Think you can guess a hex code by looking at a color? Test your skill at https://hexle.codes'
       : generateBlocks(attempts, gameResult);
 
-  let modalMessage: string =
+  let modalMessage =
     'You could share the game now...\n\nOr finish the game first and share how you did!';
   if (gameResult === GameResult.WIN) {
     modalMessage = 'You Win!';
@@ -154,9 +154,12 @@ const GameOver = ({
     >
       <CloseButton closeModal={closeModal} />
       <h3>{modalMessage}</h3>
-      <div style={{ margin: '24px auto' }}>
-        <ColorSquare hexCode={hexCode} size={100} />
-      </div>
+      {gameResult !== GameResult.IN_PROGRESS && (
+        <div style={{ margin: '24px auto' }}>
+          <p>#{hexCode}</p>
+          <ColorSquare hexCode={hexCode} size={100} />
+        </div>
+      )}
       <ShareButton
         label="Share"
         shareFunction={() => shareResult(resultsToShare)}
