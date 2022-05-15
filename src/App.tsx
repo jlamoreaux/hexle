@@ -123,11 +123,11 @@ const setStickyValue = (key: string, value: any) => {
 };
 
 const clearStickyValues = () => {
-  window.localStorage.removeItem('attempts');
   window.localStorage.removeItem('characters');
   window.localStorage.removeItem('currentIndex');
   window.localStorage.removeItem('gameResult');
   window.localStorage.removeItem('isCompleted');
+  window.localStorage.removeItem('attempts');
 };
 
 /**
@@ -421,6 +421,15 @@ const App = () => {
     setCharacters(newCharacters);
   };
 
+  const resetGame = () => {
+    clearStickyValues();
+    setAttempts(defaultAttemptsValue);
+    setCharacters(defaultCharactersValue);
+    setCurrentIndex({ row: 0, column: 0 });
+    setGameResult(GameResult.IN_PROGRESS);
+    setIsCompleted(false);
+  };
+
   useEffect(() => {
     const getDailyCode = () => {
       const dayNumber = getDayNumber();
@@ -429,10 +438,8 @@ const App = () => {
     const currentCode = getDailyCode();
 
     if (code !== currentCode) {
-      clearStickyValues();
-      setAttempts(defaultAttemptsValue);
-      setCharacters(defaultCharactersValue);
       setCode(currentCode);
+      resetGame();
     }
 
     const handleKeyDown = (keyDownEvent: KeyboardEvent) => {
