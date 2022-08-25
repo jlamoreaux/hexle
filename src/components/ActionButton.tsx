@@ -1,6 +1,6 @@
 import React from 'react';
-import { buttonStyle, DEFAULT_BACKGROUND_COLOR } from './KeyboardButton';
-import { LETTER_COLOR } from './LetterField';
+import { buttonStyle } from './KeyboardButton';
+import { DEFAULT_BACKGROUND_COLOR, LETTER_COLOR } from '../utils';
 
 interface ActionButtonProps {
   disabled?: boolean;

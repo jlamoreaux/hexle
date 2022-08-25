@@ -1,7 +1,11 @@
 import React from 'react';
 import { CharacterInput, GameResult, RESULT } from '../App';
-import { BACKGROUND_COLOR, LETTER_COLOR } from './LetterField';
-import { buttonStyle, DEFAULT_BACKGROUND_COLOR } from './KeyboardButton';
+import {
+  BACKGROUND_COLOR,
+  LETTER_COLOR,
+  DEFAULT_BACKGROUND_COLOR,
+} from '../utils';
+import { buttonStyle } from './KeyboardButton';
 
 type GameOverProps = {
   attempts: CharacterInput[][];

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Keyboard from './components/Keyboard';
-import LetterField, {
-  BACKGROUND_COLOR,
-  LETTER_COLOR,
-} from './components/LetterField';
+import LetterField from './components/LetterField';
 import data from './codes.json';
 import GameOver, { ColorSquare } from './components/GameOver';
 import { buttonStyle } from './components/KeyboardButton';
+import Footer from './components/Footer';
+import { BACKGROUND_COLOR, LETTER_COLOR } from './utils';
 
 export const HEX_CHARS = [
   'a',
@@ -529,7 +528,7 @@ const App = () => {
           setIsVisible={showOrHideModal}
         ></GameOver>
       )}
-      <div
+      <body
         style={{
           margin: 'auto',
           display: 'flex',
@@ -553,7 +552,8 @@ const App = () => {
             submitIsDisabled={currentIndex.column < 6}
           />
         </div>
-      </div>
+      </body>
+      <Footer />
     </div>
   );
 };

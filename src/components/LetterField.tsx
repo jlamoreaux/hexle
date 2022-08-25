@@ -1,21 +1,15 @@
 import React from 'react';
 import { AllowedChars, RESULT } from '../App';
-import { DEFAULT_BACKGROUND_COLOR } from './KeyboardButton';
+import {
+  LETTER_COLOR,
+  BACKGROUND_COLOR,
+  DEFAULT_BACKGROUND_COLOR,
+} from '../utils';
 
-export enum BACKGROUND_COLOR {
-  INITIAL = '#193140',
-  INCORRECT = '#030a0e',
-  IN_WORD = '#efac11',
-  CORRECT = '#00c361',
-}
-
-export enum LETTER_COLOR {
-  DEFAULT = "#d7dadc",
-  ALTERNATE = '#111',
-}
-
-export const getBackgroundColor = (guessResult: RESULT): { background: BACKGROUND_COLOR | '', letter: LETTER_COLOR } => {
-  let letter = LETTER_COLOR.DEFAULT
+export const getBackgroundColor = (
+  guessResult: RESULT
+): { background: BACKGROUND_COLOR | ''; letter: LETTER_COLOR } => {
+  let letter = LETTER_COLOR.DEFAULT;
   switch (guessResult) {
     case RESULT.CORRECT:
       letter = LETTER_COLOR.ALTERNATE;
@@ -44,7 +38,9 @@ const LetterField = (props: {
     <div
       style={{
         backgroundColor: background,
-        border: `1px solid ${ guessResult === RESULT.UNKNOWN ? DEFAULT_BACKGROUND_COLOR : background}`,
+        border: `1px solid ${
+          guessResult === RESULT.UNKNOWN ? DEFAULT_BACKGROUND_COLOR : background
+        }`,
         margin: '2px',
         fontSize: '2em',
         color: letter,

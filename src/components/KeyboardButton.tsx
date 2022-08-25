@@ -1,6 +1,7 @@
 import React from 'react';
 import { AllowedChars, RESULT } from '../App';
-import { getBackgroundColor, LETTER_COLOR } from './LetterField';
+import { getBackgroundColor } from './LetterField';
+import { DEFAULT_BACKGROUND_COLOR, LETTER_COLOR } from '../utils';
 
 export const buttonStyle = {
   border: 'none',
@@ -13,8 +14,6 @@ export const buttonStyle = {
   minWidth: 'calc(25% - 8px)',
   padding: '4px 8px',
 };
-
-export const DEFAULT_BACKGROUND_COLOR = '#767676';
 
 const KeyboardButton = (props: {
   character: AllowedChars;
