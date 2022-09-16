@@ -14,9 +14,9 @@ const Keyboard = (props: {
   return (
     <div
       style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        flexDirection: 'column',
+        // display: 'flex',
+        // flexWrap: 'wrap',
+        // flexDirection: 'column',
         maxWidth: '300px',
         margin: 'auto',
       }}
