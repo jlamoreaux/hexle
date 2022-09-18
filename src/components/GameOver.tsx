@@ -7,10 +7,14 @@ import {
 } from '../utils';
 import { buttonStyle } from './KeyboardButton';
 
-type GameOverProps = {
+type verProps = {
   attempts: CharacterInput[][];
   gameNumber: number;
   gameResult: GameResult;
+  numGamesPlayed: number;
+  longestStreak: number;
+  totalWins: number;
+  winStreak: number;
   hexCode: string;
   isVisible: boolean;
   setIsVisible: (shouldClose: boolean) => void;
@@ -52,6 +56,37 @@ export const ColorSquare = ({
   );
 };
 
+const StatItem = ({ stat, label }: { stat: number; label: string; }) => {
+  return (
+    <div
+      className="stats-item"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '22%',
+      }}
+    >
+      <span
+        className="stats-item-number"
+        style={{
+          fontSize: '1.4em',
+          fontWeight: 600,
+        }}
+      >
+        {stat}
+      </span>
+      <span
+        className="stats-item-label"
+        style={{
+          fontSize: '.84em'
+        }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
 const ShareButton = ({ label, shareFunction }: ShareButtonProps) => {
   return (
     <button
@@ -92,14 +127,18 @@ const CloseButton = ({ closeModal }: { closeModal: () => void }) => {
   );
 };
 
-const GameOver = ({
+const ver = ({
   attempts,
   gameNumber,
   gameResult,
+  numGamesPlayed,
+  longestStreak,
+  totalWins,
+  winStreak,        
   hexCode,
   isVisible,
   setIsVisible,
-}: GameOverProps): JSX.Element => {
+}: verProps): JSX.Element => {
   const closeModal = () => {
     setIsVisible(false);
   };
@@ -164,6 +203,27 @@ const GameOver = ({
           <ColorSquare hexCode={hexCode} size={100} />
         </div>
       )}
+      <div>
+        <h3>Stats</h3>
+        <div
+          className="stats-container"
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            paddingBottom: '16px',
+            justifyContent: 'space-around'
+          }}
+        >
+          <StatItem stat={numGamesPlayed} label="Games Played" />
+          <StatItem
+            stat={Math.floor((totalWins / numGamesPlayed) * 100) || 0}
+            label="Win %"
+          />
+          <StatItem stat={winStreak} label="Current Streak" />
+          <StatItem stat={longestStreak} label="Longest Streak" />
+        </div>
+      </div>
+
       <ShareButton
         label="Share"
         shareFunction={() => shareResult(resultsToShare)}
@@ -176,4 +236,4 @@ const GameOver = ({
   );
 };
 
-export default GameOver;
+export default ver;

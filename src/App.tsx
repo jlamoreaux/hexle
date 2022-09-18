@@ -249,6 +249,11 @@ const App = () => {
   );
   const [isShareModalVisible, setIsShareModalVisible] =
     useState<boolean>(false);
+  const [winStreak, setWinStreak] = useStickyState<number>(0, 'winStreak');
+  const [numGamesPlayed, setNumGamesPlayed] = useStickyState<number>(0, 'numGamesPlayed');
+  const [totalWins, setTotalWins] = useStickyState<number>(0, 'totalWins');
+  const [longestStreak, setLongestStreak] = useStickyState<number>(0, 'longestStreak');
+  const [lastGamePlayed, setLastGamePlayed] = useStickyState<number>(0, 'lastGamePlayed');
 
   /**
    * Analyzes the correctness of the current guess
@@ -329,9 +334,7 @@ const App = () => {
       (char) => char.result === RESULT.CORRECT
     );
     if (isGameWon) {
-      setGameResult(GameResult.WIN);
-      setIsCompleted(true);
-      setIsShareModalVisible(true);
+      handleGameWin();
       return;
     }
     moveRows();
@@ -351,6 +354,31 @@ const App = () => {
     }
   };
 
+  const handleGameWin = () => {
+    setGameResult(GameResult.WIN);
+    const currentWinStreak = winStreak + 1
+    setWinStreak(currentWinStreak);
+    setTotalWins(totalWins + 1);
+    if (currentWinStreak > longestStreak) {
+      setLongestStreak(currentWinStreak);
+    }
+    handleGameEnd();
+  }
+
+  const handleGameLoss = () => {
+    setGameResult(GameResult.LOSS);
+    setWinStreak(0);
+    setNumGamesPlayed(numGamesPlayed + 1);
+    handleGameEnd();
+  }
+
+  const handleGameEnd = () => {
+    setIsCompleted(true);
+    setLastGamePlayed(dayNumber)
+    setNumGamesPlayed(numGamesPlayed + 1);
+    setIsShareModalVisible(true);
+  }
+
   /**
    * Moves the currentIndex to the next row if another guess is available
    */
@@ -359,9 +387,7 @@ const App = () => {
     if (currentIndex.row < 5) {
       return setCurrentIndex({ row, column });
     }
-    setIsCompleted(true);
-    setGameResult(GameResult.LOSS);
-    setIsShareModalVisible(true);
+    handleGameLoss();
   };
 
   const setValueOfCurrentField = (value: AllowedChars) => {
@@ -427,11 +453,14 @@ const App = () => {
     setCurrentIndex({ row: 0, column: 0 });
     setGameResult(GameResult.IN_PROGRESS);
     setIsCompleted(false);
+    if (dayNumber > lastGamePlayed + 1) {
+      setWinStreak(0);
+    }
   };
+  const dayNumber = getDayNumber();
 
   useEffect(() => {
     const getDailyCode = () => {
-      const dayNumber = getDayNumber();
       return data.codes[dayNumber];
     };
     const currentCode = getDailyCode();
@@ -522,7 +551,11 @@ const App = () => {
         <GameOver
           attempts={attempts.slice(0, currentIndex.row + 1)}
           gameResult={gameResult}
-          gameNumber={getDayNumber()}
+          gameNumber={dayNumber}
+          numGamesPlayed={numGamesPlayed}
+          longestStreak={longestStreak}
+          totalWins={totalWins}
+          winStreak={winStreak}
           hexCode={getHexCode(code)}
           isVisible={isShareModalVisible}
           setIsVisible={showOrHideModal}
