@@ -359,7 +359,7 @@ const App = () => {
     const currentWinStreak = winStreak + 1
     setWinStreak(currentWinStreak);
     setTotalWins(totalWins + 1);
-    if (winStreak > longestStreak) {
+    if (currentWinStreak > longestStreak) {
       setLongestStreak(currentWinStreak);
     }
     handleGameEnd();
