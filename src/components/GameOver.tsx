@@ -199,7 +199,7 @@ const ver = ({
       <h3>{modalMessage}</h3>
       {gameResult !== GameResult.IN_PROGRESS && (
         <div style={{ margin: '24px auto' }}>
-          <p>#{hexCode}</p>
+          <p style={{textTransform: "uppercase"}}>#{hexCode}</p>
           <ColorSquare hexCode={hexCode} size={100} />
         </div>
       )}
