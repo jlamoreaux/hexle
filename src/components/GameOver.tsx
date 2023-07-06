@@ -6,6 +6,7 @@ import {
   DEFAULT_BACKGROUND_COLOR,
 } from '../utils';
 import { buttonStyle } from './KeyboardButton';
+import { CloseButton } from './CloseButton';
 
 type verProps = {
   attempts: CharacterInput[][];
@@ -102,27 +103,6 @@ const ShareButton = ({ label, shareFunction }: ShareButtonProps) => {
       }}
     >
       {label}
-    </button>
-  );
-};
-
-const CloseButton = ({ closeModal }: { closeModal: () => void }) => {
-  return (
-    <button
-      style={{
-        border: 'none',
-        background: 'none',
-        color: LETTER_COLOR.DEFAULT,
-        cursor: 'pointer',
-        left: 'auto',
-        margin: 'auto',
-        position: 'absolute',
-        right: 0,
-      }}
-      type="button"
-      onClick={closeModal}
-    >
-      Close
     </button>
   );
 };

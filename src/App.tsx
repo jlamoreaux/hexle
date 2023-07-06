@@ -6,6 +6,8 @@ import GameOver, { ColorSquare } from './components/GameOver';
 import { buttonStyle } from './components/KeyboardButton';
 import Footer from './components/Footer';
 import { BACKGROUND_COLOR, LETTER_COLOR } from './utils';
+import HelpModal from './components/HelpModal';
+import {FiShare} from 'react-icons/fi';
 
 export const HEX_CHARS = [
   'a',
@@ -515,37 +517,50 @@ const App = () => {
         style={{
           width: '100%',
           position: 'relative',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '16px',
+          marginTop: '16px',
         }}
       >
         <div
           style={{
-            position: 'absolute',
-            left: '48px',
-            top: '4px',
-            border: `2px solid ${LETTER_COLOR.DEFAULT}`,
-            borderRadius: '4px',
+            flex: 1,
           }}
         >
           {code && <ColorSquare hexCode={getHexCode(code)} size={40} />}
         </div>
-        <button
-          type="button"
-          onClick={() => showOrHideModal(true)}
+        <h1
           style={{
-            ...buttonStyle,
-            backgroundColor: BACKGROUND_COLOR.INCORRECT,
-            color: LETTER_COLOR.DEFAULT,
-            cursor: 'pointer',
-            height: 'auto',
-            minWidth: 'none',
-            padding: '8px',
-            position: 'absolute',
-            right: '24px',
+            flex: 1,
+          }}
+        >HEXLE</h1>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            height: '48px',
+            flex: 1,
           }}
         >
-          Share
-        </button>
-        <h1>HEXLE</h1>
+          <button
+            type="button"
+            onClick={() => showOrHideModal(true)}
+            style={{
+              ...buttonStyle,
+              backgroundColor: BACKGROUND_COLOR.INCORRECT,
+              color: LETTER_COLOR.DEFAULT,
+              cursor: 'pointer',
+              height: 'auto',
+              minWidth: 'none',
+              padding: '8px',
+            }}
+          >
+          <FiShare/>
+          </button>
+          <HelpModal />
+        </div>
       </header>
       {code && isShareModalVisible === true && (
         <GameOver
