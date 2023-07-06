@@ -10,9 +10,7 @@ const FooterItem = ({
     <>
       <span
         style={{
-          // borderLeft: '1px solid',
           paddingTop: '8px',
-          // margin: '4px',
         }}
       >
         {children}
@@ -59,7 +57,7 @@ const Footer = () => {
         >
           <FooterItem>
             Created by{' '}
-            <a href="https://jlamoreaux.com" target="_blank" rel="noreferrer">
+            <a href="https://jlmx.dev" target="_blank" rel="noreferrer">
               Jordan Lamoreaux
             </a>
           </FooterItem>

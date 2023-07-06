@@ -1,5 +1,3 @@
-import React from 'react';
-
 export enum BACKGROUND_COLOR {
   INITIAL = '#193140',
   INCORRECT = '#030a0e',
