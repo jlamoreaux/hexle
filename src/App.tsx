@@ -1,47 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import Keyboard from './components/Keyboard';
-import LetterField from './components/LetterField';
-import data from './codes.json';
-import GameOver, { ColorSquare } from './components/GameOver';
-import { buttonStyle } from './components/KeyboardButton';
-import Footer from './components/Footer';
-import { BACKGROUND_COLOR, LETTER_COLOR } from './utils';
-import HelpModal from './components/HelpModal';
-import {FiShare} from 'react-icons/fi';
+import React, { useState, useEffect } from "react";
+import Keyboard from "./components/Keyboard";
+import LetterField from "./components/LetterField";
+import data from "./codes.json";
+import GameOver, { ColorSquare } from "./components/GameOver";
+import { buttonStyle } from "./components/KeyboardButton";
+import Footer from "./components/Footer";
+import { BACKGROUND_COLOR, LETTER_COLOR } from "./utils";
+import HelpModal from "./components/HelpModal";
+import { FiShare } from "react-icons/fi";
 
 export const HEX_CHARS = [
-  'a',
-  'b',
-  'c',
-  'd',
-  'e',
-  'f',
-  '0',
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9',
+  "a",
+  "b",
+  "c",
+  "d",
+  "e",
+  "f",
+  "0",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
 ] as const;
 
 export enum GameResult {
-  WIN = 'WIN',
-  LOSS = 'LOSS',
-  IN_PROGRESS = 'IN_PROGRESS',
+  WIN = "WIN",
+  LOSS = "LOSS",
+  IN_PROGRESS = "IN_PROGRESS",
 }
 
-export type AllowedChars = typeof HEX_CHARS[number];
+export type AllowedChars = (typeof HEX_CHARS)[number];
 
 type CharCount = {
   [char in AllowedChars]?: [number];
 };
 
 export interface CharacterInput {
-  value: AllowedChars | '';
+  value: AllowedChars | "";
   result: RESULT;
 }
 
@@ -55,10 +55,10 @@ interface InputIndex {
 }
 
 export enum RESULT {
-  CORRECT = 'correct',
-  IN_WORD = 'in_word',
-  INCORRECT = 'incorrect',
-  UNKNOWN = 'unknown',
+  CORRECT = "correct",
+  IN_WORD = "in_word",
+  INCORRECT = "incorrect",
+  UNKNOWN = "unknown",
 }
 
 const RowOfInputs = (props: { rowInput: Array<CharacterInput> }) => {
@@ -67,7 +67,7 @@ const RowOfInputs = (props: { rowInput: Array<CharacterInput> }) => {
   return (
     <div
       style={{
-        display: 'flex',
+        display: "flex",
       }}
     >
       {rowInput &&
@@ -124,11 +124,11 @@ const setStickyValue = (key: string, value: any) => {
 };
 
 const clearStickyValues = () => {
-  window.localStorage.removeItem('characters');
-  window.localStorage.removeItem('currentIndex');
-  window.localStorage.removeItem('gameResult');
-  window.localStorage.removeItem('isCompleted');
-  window.localStorage.removeItem('attempts');
+  window.localStorage.removeItem("characters");
+  window.localStorage.removeItem("currentIndex");
+  window.localStorage.removeItem("gameResult");
+  window.localStorage.removeItem("isCompleted");
+  window.localStorage.removeItem("attempts");
 };
 
 /**
@@ -137,7 +137,7 @@ const clearStickyValues = () => {
  */
 const getDayNumber = (): number => {
   const today = new Date();
-  const startDate = new Date('2022-03-26');
+  const startDate = new Date("2025-07-03");
   return Math.floor(
     (today.getTime() - startDate.getTime()) / (1000 * 3600 * 24)
   );
@@ -157,10 +157,10 @@ const getHexCode = (code: number): string => {
  * @param hexCode the hexidecimal code to analyze
  * @returns {CharCount} An object where the key is the character and the value is the number of occurrances
  */
-const getCharCount = (hexCode: Array<AllowedChars | ''>): CharCount => {
+const getCharCount = (hexCode: Array<AllowedChars | "">): CharCount => {
   let charCount: CharCount = {};
   hexCode.forEach((character, index) => {
-    if (character !== '') {
+    if (character !== "") {
       const char = character as AllowedChars;
       charCount[char]
         ? charCount[char]?.push(index)
@@ -172,90 +172,99 @@ const getCharCount = (hexCode: Array<AllowedChars | ''>): CharCount => {
 
 const defaultAttemptsValue = [
   [
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
   ],
   [
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
   ],
   [
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
   ],
   [
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
   ],
   [
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
   ],
   [
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
-    { value: '', result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
+    { value: "", result: RESULT.UNKNOWN },
   ],
 ] as CharacterInput[][];
 
 const defaultCharactersValue = {} as CharacterStatus;
 
 const App = () => {
-  const [code, setCode] = useStickyState<number | null>(null, 'code');
+  const [code, setCode] = useStickyState<number | null>(null, "code");
   const [attempts, setAttempts] = useState<CharacterInput[][]>(() => {
-    const stickyValue = window.localStorage.getItem('attempts');
+    const stickyValue = window.localStorage.getItem("attempts");
     return stickyValue !== null
       ? JSON.parse(stickyValue)
       : defaultAttemptsValue;
   });
   const [isCompleted, setIsCompleted] = useStickyState<boolean>(
     false,
-    'isCompleted'
+    "isCompleted"
   );
   const [characters, setCharacters] = useState<CharacterStatus>(() => {
-    const stickyValue = getStickyValue('characters');
+    const stickyValue = getStickyValue("characters");
     return stickyValue !== null
       ? JSON.parse(stickyValue)
       : defaultCharactersValue;
   });
   const [currentIndex, setCurrentIndex] = useStickyState<InputIndex>(
     { row: 0, column: 0 },
-    'currentIndex'
+    "currentIndex"
   );
   const [gameResult, setGameResult] = useStickyState<GameResult>(
     GameResult.IN_PROGRESS,
-    'gameResult'
+    "gameResult"
   );
   const [isShareModalVisible, setIsShareModalVisible] =
     useState<boolean>(false);
-  const [winStreak, setWinStreak] = useStickyState<number>(0, 'winStreak');
-  const [numGamesPlayed, setNumGamesPlayed] = useStickyState<number>(0, 'numGamesPlayed');
-  const [totalWins, setTotalWins] = useStickyState<number>(0, 'totalWins');
-  const [longestStreak, setLongestStreak] = useStickyState<number>(0, 'longestStreak');
-  const [lastGamePlayed, setLastGamePlayed] = useStickyState<number>(0, 'lastGamePlayed');
+  const [winStreak, setWinStreak] = useStickyState<number>(0, "winStreak");
+  const [numGamesPlayed, setNumGamesPlayed] = useStickyState<number>(
+    0,
+    "numGamesPlayed"
+  );
+  const [totalWins, setTotalWins] = useStickyState<number>(0, "totalWins");
+  const [longestStreak, setLongestStreak] = useStickyState<number>(
+    0,
+    "longestStreak"
+  );
+  const [lastGamePlayed, setLastGamePlayed] = useStickyState<number>(
+    0,
+    "lastGamePlayed"
+  );
 
   /**
    * Analyzes the correctness of the current guess
@@ -271,7 +280,7 @@ const App = () => {
     const guessedCharCount = getCharCount(currentAttemptValues);
     const guessedChars = Object.keys(guessedCharCount) as Array<AllowedChars>;
     const trueCharCount = getCharCount(
-      getHexCode(code).split('') as Array<AllowedChars>
+      getHexCode(code).split("") as Array<AllowedChars>
     );
     let attemptWithResults = attempt;
     guessedChars.forEach((character) => {
@@ -358,28 +367,28 @@ const App = () => {
 
   const handleGameWin = () => {
     setGameResult(GameResult.WIN);
-    const currentWinStreak = winStreak + 1
+    const currentWinStreak = winStreak + 1;
     setWinStreak(currentWinStreak);
     setTotalWins(totalWins + 1);
     if (currentWinStreak > longestStreak) {
       setLongestStreak(currentWinStreak);
     }
     handleGameEnd();
-  }
+  };
 
   const handleGameLoss = () => {
     setGameResult(GameResult.LOSS);
     setWinStreak(0);
     setNumGamesPlayed(numGamesPlayed + 1);
     handleGameEnd();
-  }
+  };
 
   const handleGameEnd = () => {
     setIsCompleted(true);
-    setLastGamePlayed(dayNumber)
+    setLastGamePlayed(dayNumber);
     setNumGamesPlayed(numGamesPlayed + 1);
     setIsShareModalVisible(true);
-  }
+  };
 
   /**
    * Moves the currentIndex to the next row if another guess is available
@@ -411,7 +420,7 @@ const App = () => {
     let currentAttempts = attempts;
     const { row, column } = currentIndex;
     currentAttempts[row][column - 1] = {
-      value: '',
+      value: "",
       result: RESULT.UNKNOWN,
     };
 
@@ -478,23 +487,23 @@ const App = () => {
         const key = keyDownEvent.key as AllowedChars;
         setValueOfCurrentField(key);
       }
-      if (keyDownEvent.key.toLowerCase() === 'backspace') {
+      if (keyDownEvent.key.toLowerCase() === "backspace") {
         deleteCharacter();
       }
       if (
-        keyDownEvent.key.toLowerCase() === 'enter' &&
+        keyDownEvent.key.toLowerCase() === "enter" &&
         currentIndex.column > 5
       ) {
         handleSubmit();
       }
     };
 
-    setStickyValue('attempts', attempts);
-    setStickyValue('characters', characters);
+    setStickyValue("attempts", attempts);
+    setStickyValue("characters", characters);
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [deleteCharacter, setValueOfCurrentField, attempts, characters]);
 
@@ -505,23 +514,23 @@ const App = () => {
   return (
     <div
       style={{
-        textAlign: 'center',
+        textAlign: "center",
         color: LETTER_COLOR.DEFAULT,
-        maxWidth: '350px',
-        margin: 'auto',
+        maxWidth: "350px",
+        margin: "auto",
         left: 0,
         right: 0,
       }}
     >
       <header
         style={{
-          width: '100%',
-          position: 'relative',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '16px',
-          marginTop: '16px',
+          width: "100%",
+          position: "relative",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "16px",
+          marginTop: "16px",
         }}
       >
         <div
@@ -535,12 +544,14 @@ const App = () => {
           style={{
             flex: 1,
           }}
-        >HEXLE</h1>
+        >
+          HEXLE
+        </h1>
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            height: '48px',
+            display: "flex",
+            justifyContent: "flex-end",
+            height: "48px",
             flex: 1,
           }}
         >
@@ -551,13 +562,13 @@ const App = () => {
               ...buttonStyle,
               backgroundColor: BACKGROUND_COLOR.INCORRECT,
               color: LETTER_COLOR.DEFAULT,
-              cursor: 'pointer',
-              height: 'auto',
-              minWidth: 'none',
-              padding: '8px',
+              cursor: "pointer",
+              height: "auto",
+              minWidth: "none",
+              padding: "8px",
             }}
           >
-          <FiShare/>
+            <FiShare />
           </button>
           <HelpModal />
         </div>
@@ -578,10 +589,10 @@ const App = () => {
       )}
       <body
         style={{
-          margin: 'auto',
-          display: 'flex',
-          width: '100%',
-          justifyContent: 'center',
+          margin: "auto",
+          display: "flex",
+          width: "100%",
+          justifyContent: "center",
         }}
       >
         <div>
