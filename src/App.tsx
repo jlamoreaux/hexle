@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Keyboard from "./components/Keyboard";
 import LetterField from "./components/LetterField";
 import data from "./codes.json";
@@ -266,11 +266,40 @@ const App = () => {
     "lastGamePlayed"
   );
 
+  const updateCharacter = useCallback((updatedChars: CharacterStatus) => {
+    const newCharacters = characters;
+    if (characters) {
+      Object.keys(updatedChars).forEach((char) => {
+        const charToReplace = char as AllowedChars;
+        switch (newCharacters[charToReplace]) {
+          case RESULT.CORRECT:
+            break;
+          case RESULT.IN_WORD:
+            if (
+              updatedChars[charToReplace] ===
+              (RESULT.INCORRECT || RESULT.IN_WORD)
+            ) {
+              break;
+            }
+            newCharacters[charToReplace] = updatedChars[charToReplace];
+            break;
+          default:
+            newCharacters[charToReplace] = updatedChars[charToReplace];
+            break;
+        }
+        if (!(newCharacters[charToReplace] === RESULT.CORRECT)) {
+          newCharacters[charToReplace] = updatedChars[charToReplace];
+        }
+      });
+    }
+    setCharacters(newCharacters);
+  }, [characters]);
+
   /**
    * Analyzes the correctness of the current guess
    * @param attempt array containing all characters in the current guess
    */
-  const guessCode = (attempt: CharacterInput[]): void => {
+  const guessCode = useCallback((attempt: CharacterInput[]): void => {
     if (!code) {
       return;
     }
@@ -336,9 +365,60 @@ const App = () => {
     currentAttempts[currentIndex.row] = attemptWithResults;
 
     setAttempts(currentAttempts);
-  };
+  }, [code, attempts, currentIndex.row, updateCharacter]);
 
-  const handleSubmit = () => {
+  /**
+   * Moves currentIndex which points to the square that is the current active input
+   */
+  const moveCurrentIndex = useCallback(() => {
+    let { row, column } = currentIndex;
+    column++;
+    if (currentIndex.column < 6) {
+      setCurrentIndex({
+        row,
+        column: column,
+      });
+    }
+  }, [currentIndex]);
+
+  const dayNumber = getDayNumber();
+
+  const handleGameEnd = useCallback(() => {
+    setIsCompleted(true);
+    setLastGamePlayed(dayNumber);
+    setNumGamesPlayed((prev) => prev + 1);
+    setIsShareModalVisible(true);
+  }, [dayNumber, setLastGamePlayed, setNumGamesPlayed]);
+
+  const handleGameWin = useCallback(() => {
+    setGameResult(GameResult.WIN);
+    const currentWinStreak = winStreak + 1;
+    setWinStreak(currentWinStreak);
+    setTotalWins(totalWins + 1);
+    if (currentWinStreak > longestStreak) {
+      setLongestStreak(currentWinStreak);
+    }
+    handleGameEnd();
+  }, [winStreak, totalWins, longestStreak, handleGameEnd, setWinStreak, setTotalWins, setLongestStreak]);
+
+  const handleGameLoss = useCallback(() => {
+    setGameResult(GameResult.LOSS);
+    setWinStreak(0);
+    handleGameEnd();
+  }, [handleGameEnd, setWinStreak]);
+
+  /**
+   * Moves the currentIndex to the next row if another guess is available
+   */
+  const moveRows = useCallback(() => {
+    const [row, column] = [currentIndex.row + 1, 0];
+    if (currentIndex.row < 5) {
+      return setCurrentIndex({ row, column });
+    }
+    handleGameLoss();
+  }, [currentIndex.row, handleGameLoss]);
+
+  const handleSubmit = useCallback(() => {
     if (isCompleted) return;
     guessCode(attempts[currentIndex.row]);
     const isGameWon = attempts[currentIndex.row].every(
@@ -349,59 +429,9 @@ const App = () => {
       return;
     }
     moveRows();
-  };
+  }, [isCompleted, guessCode, attempts, currentIndex.row, handleGameWin, moveRows]);
 
-  /**
-   * Moves currentIndex which points to the square that is the current active input
-   */
-  const moveCurrentIndex = () => {
-    let { row, column } = currentIndex;
-    column++;
-    if (currentIndex.column < 6) {
-      setCurrentIndex({
-        row,
-        column: column,
-      });
-    }
-  };
-
-  const handleGameWin = () => {
-    setGameResult(GameResult.WIN);
-    const currentWinStreak = winStreak + 1;
-    setWinStreak(currentWinStreak);
-    setTotalWins(totalWins + 1);
-    if (currentWinStreak > longestStreak) {
-      setLongestStreak(currentWinStreak);
-    }
-    handleGameEnd();
-  };
-
-  const handleGameLoss = () => {
-    setGameResult(GameResult.LOSS);
-    setWinStreak(0);
-    setNumGamesPlayed(numGamesPlayed + 1);
-    handleGameEnd();
-  };
-
-  const handleGameEnd = () => {
-    setIsCompleted(true);
-    setLastGamePlayed(dayNumber);
-    setNumGamesPlayed(numGamesPlayed + 1);
-    setIsShareModalVisible(true);
-  };
-
-  /**
-   * Moves the currentIndex to the next row if another guess is available
-   */
-  const moveRows = () => {
-    const [row, column] = [currentIndex.row + 1, 0];
-    if (currentIndex.row < 5) {
-      return setCurrentIndex({ row, column });
-    }
-    handleGameLoss();
-  };
-
-  const setValueOfCurrentField = (value: AllowedChars) => {
+  const setValueOfCurrentField = useCallback((value: AllowedChars) => {
     if (isCompleted) return;
     if (currentIndex.column > 5) {
       return;
@@ -410,9 +440,9 @@ const App = () => {
     fieldValues[currentIndex.row][currentIndex.column].value = value;
     setAttempts(fieldValues);
     moveCurrentIndex();
-  };
+  }, [isCompleted, currentIndex, attempts, moveCurrentIndex]);
 
-  const deleteCharacter = () => {
+  const deleteCharacter = useCallback(() => {
     if (isCompleted) return;
     if (currentIndex.column <= 0) {
       return;
@@ -426,38 +456,9 @@ const App = () => {
 
     setAttempts(currentAttempts);
     setCurrentIndex({ row, column: column - 1 });
-  };
+  }, [isCompleted, currentIndex, attempts]);
 
-  const updateCharacter = (updatedChars: CharacterStatus) => {
-    const newCharacters = characters;
-    if (characters) {
-      Object.keys(updatedChars).forEach((char) => {
-        const charToReplace = char as AllowedChars;
-        switch (newCharacters[charToReplace]) {
-          case RESULT.CORRECT:
-            break;
-          case RESULT.IN_WORD:
-            if (
-              updatedChars[charToReplace] ===
-              (RESULT.INCORRECT || RESULT.IN_WORD)
-            ) {
-              break;
-            }
-            newCharacters[charToReplace] = updatedChars[charToReplace];
-            break;
-          default:
-            newCharacters[charToReplace] = updatedChars[charToReplace];
-            break;
-        }
-        if (!(newCharacters[charToReplace] === RESULT.CORRECT)) {
-          newCharacters[charToReplace] = updatedChars[charToReplace];
-        }
-      });
-    }
-    setCharacters(newCharacters);
-  };
-
-  const resetGame = () => {
+  const resetGame = useCallback(() => {
     clearStickyValues();
     setAttempts(defaultAttemptsValue);
     setCharacters(defaultCharactersValue);
@@ -467,8 +468,7 @@ const App = () => {
     if (dayNumber > lastGamePlayed + 1) {
       setWinStreak(0);
     }
-  };
-  const dayNumber = getDayNumber();
+  }, [dayNumber, lastGamePlayed]);
 
   useEffect(() => {
     const getDailyCode = () => {
