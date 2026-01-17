@@ -379,7 +379,7 @@ const App = () => {
         column: column,
       });
     }
-  }, [currentIndex]);
+  }, [currentIndex, setCurrentIndex]);
 
   const dayNumber = getDayNumber();
 
@@ -388,7 +388,7 @@ const App = () => {
     setLastGamePlayed(dayNumber);
     setNumGamesPlayed((prev: number) => prev + 1);
     setIsShareModalVisible(true);
-  }, [dayNumber, setLastGamePlayed, setNumGamesPlayed]);
+  }, [dayNumber, setLastGamePlayed, setNumGamesPlayed, setIsCompleted]);
 
   const handleGameWin = useCallback(() => {
     setGameResult(GameResult.WIN);
@@ -399,13 +399,13 @@ const App = () => {
       setLongestStreak(currentWinStreak);
     }
     handleGameEnd();
-  }, [winStreak, totalWins, longestStreak, handleGameEnd, setWinStreak, setTotalWins, setLongestStreak]);
+  }, [winStreak, totalWins, longestStreak, handleGameEnd, setWinStreak, setTotalWins, setLongestStreak, setGameResult]);
 
   const handleGameLoss = useCallback(() => {
     setGameResult(GameResult.LOSS);
     setWinStreak(0);
     handleGameEnd();
-  }, [handleGameEnd, setWinStreak]);
+  }, [handleGameEnd, setWinStreak, setGameResult]);
 
   /**
    * Moves the currentIndex to the next row if another guess is available
@@ -416,7 +416,7 @@ const App = () => {
       return setCurrentIndex({ row, column });
     }
     handleGameLoss();
-  }, [currentIndex.row, handleGameLoss]);
+  }, [currentIndex.row, handleGameLoss, setCurrentIndex]);
 
   const handleSubmit = useCallback(() => {
     if (isCompleted) return;
@@ -456,7 +456,7 @@ const App = () => {
 
     setAttempts(currentAttempts);
     setCurrentIndex({ row, column: column - 1 });
-  }, [isCompleted, currentIndex, attempts]);
+  }, [isCompleted, currentIndex, attempts, setCurrentIndex]);
 
   const resetGame = useCallback(() => {
     clearStickyValues();
@@ -468,7 +468,7 @@ const App = () => {
     if (dayNumber > lastGamePlayed + 1) {
       setWinStreak(0);
     }
-  }, [dayNumber, lastGamePlayed]);
+  }, [dayNumber, lastGamePlayed, setCurrentIndex, setGameResult, setIsCompleted, setWinStreak]);
 
   useEffect(() => {
     const getDailyCode = () => {
