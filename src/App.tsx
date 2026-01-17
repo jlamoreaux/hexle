@@ -505,7 +505,7 @@ const App = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [deleteCharacter, setValueOfCurrentField, attempts, characters]);
+  }, [deleteCharacter, setValueOfCurrentField, attempts, characters, code, currentIndex.column, dayNumber, handleSubmit, isCompleted, resetGame, setCode]);
 
   const showOrHideModal = (isVisible: boolean) => {
     setIsShareModalVisible(isVisible);
