@@ -386,7 +386,7 @@ const App = () => {
   const handleGameEnd = useCallback(() => {
     setIsCompleted(true);
     setLastGamePlayed(dayNumber);
-    setNumGamesPlayed((prev) => prev + 1);
+    setNumGamesPlayed((prev: number) => prev + 1);
     setIsShareModalVisible(true);
   }, [dayNumber, setLastGamePlayed, setNumGamesPlayed]);
 
