@@ -4,7 +4,7 @@ import { LETTER_COLOR } from '../utils';
 const FooterItem = ({
   children,
 }: {
-  children?: React.ReactChild | React.ReactChild[];
+  children?: React.ReactNode;
 }) => {
   return (
     <>

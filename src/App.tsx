@@ -587,7 +587,7 @@ const App = () => {
           setIsVisible={showOrHideModal}
         ></GameOver>
       )}
-      <body
+      <main
         style={{
           margin: "auto",
           display: "flex",
@@ -611,7 +611,7 @@ const App = () => {
             submitIsDisabled={currentIndex.column < 6}
           />
         </div>
-      </body>
+      </main>
       <Footer />
     </div>
   );
