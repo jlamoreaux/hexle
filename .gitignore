@@ -24,5 +24,6 @@ yarn-error.log*
 
 # secrets and Vercel link
 .env
-.env*.local
+.env.*
+!.env.example
 .vercel
