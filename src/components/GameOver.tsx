@@ -118,7 +118,7 @@ const ver = ({
   hexCode,
   isVisible,
   setIsVisible,
-}: verProps): JSX.Element => {
+}: verProps): React.JSX.Element => {
   const closeModal = () => {
     setIsVisible(false);
   };

@@ -2,7 +2,7 @@ import React from "react";
 import { BACKGROUND_COLOR } from "../utils";
 
 type ModalProps = {
-  children: React.ReactChild | React.ReactChild[];
+  children: React.ReactNode;
   isVisible: boolean;
 };
 
